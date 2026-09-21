@@ -2,35 +2,54 @@ import io, os, secrets
 from datetime import datetime
 from functools import wraps
 
-from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file
-from flask_mysqldb import MySQL
+from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file, g
 from openpyxl import Workbook
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import os
 
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, session, send_file, flash
 
 load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "change-this-secret-key")
 
-app.config["MYSQL_HOST"] = os.getenv("MYSQL_HOST", "127.0.0.1")
-app.config["MYSQL_USER"] = os.getenv("MYSQL_USER", "root")
-app.config["MYSQL_PASSWORD"] = os.getenv("MYSQL_PASSWORD", "")
-app.config["MYSQL_DB"] = os.getenv("MYSQL_DB", "ukdc_exam")
-app.config["MYSQL_PORT"] = int(os.getenv("MYSQL_PORT", "3306"))
-app.config["MYSQL_CURSORCLASS"] = "DictCursor"
+MYSQL_CONFIG = {
+    "host": os.getenv("MYSQL_HOST", "127.0.0.1"),
+    "user": os.getenv("MYSQL_USER", "root"),
+    "password": os.getenv("MYSQL_PASSWORD", ""),
+    "database": os.getenv("MYSQL_DB", "ukdc_exam"),
+    "port": int(os.getenv("MYSQL_PORT", "3306")),
+    "charset": "utf8mb4",
+    "cursorclass": __import__("pymysql").cursors.DictCursor,
+    "autocommit": False,
+}
 
-mysql = MySQL(app)
+
+@app.before_request
+def open_db():
+    if "db" not in g:
+        import pymysql
+        g.db = pymysql.connect(**MYSQL_CONFIG)
+
+
+@app.teardown_appcontext
+def close_db(exception=None):
+    connection = g.pop("db", None)
+    if connection is not None:
+        if exception is not None:
+            try:
+                connection.rollback()
+            except Exception:
+                pass
+        connection.close()
 
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
 
 def db():
-    return mysql.connection
+    return g.db
 
 def admin_required(view):
     @wraps(view)
@@ -65,12 +84,12 @@ def delete_all_results():
 
     try:
         cur.execute("DELETE FROM results")
-        mysql.connection.commit()
+        db().commit()
 
         flash("Semua hasil peserta berhasil dihapus.", "success")
 
     except Exception:
-        mysql.connection.rollback()
+        db().rollback()
         flash("Gagal menghapus semua hasil peserta.", "error")
 
     finally:
