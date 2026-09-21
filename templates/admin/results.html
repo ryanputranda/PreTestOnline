@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+
+{% block title %}Hasil Tes{% endblock %}
+
+{% block content %}
+
+<div class="admin-head">
+  <div>
+    <div class="eyebrow">ADMIN</div>
+    <h1>Hasil Peserta</h1>
+    <p>{{ results|length }} hasil tersimpan.</p>
+  </div>
+
+  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+
+<a class="btn primary" href="{{ url_for('export_results') }}">
+  Export Excel
+</a>
+
+{% if results|length > 0 %}
+<form
+  action="{{ url_for('delete_all_results') }}"
+  method="post"
+  style="display: inline;"
+  onsubmit="return confirmDeleteAll();"
+>
+  <button type="submit" class="btn danger">
+    Hapus Semua
+  </button>
+</form>
+{% endif %}
+
+  </div>
+</div>
+
+<div class="filters">
+
+<a
+class="btn small {{ 'primary' if sort == 'date' else 'secondary' }}"
+href="{{ url_for('admin_results', sort='date') }}"
+
+>
+
+Terbaru
+
+  </a>
+
+<a
+class="btn small {{ 'primary' if sort == 'score' else 'secondary' }}"
+href="{{ url_for('admin_results', sort='score') }}"
+
+>
+
+
+Nilai
+
+
+  </a>
+
+<a
+class="btn small {{ 'primary' if sort == 'name' else 'secondary' }}"
+href="{{ url_for('admin_results', sort='name') }}"
+
+>
+Nama
+  </a>
+
+</div>
+
+<div class="table-card">
+
+  <table>
+
+<thead>
+  <tr>
+    <th>No</th>
+    <th>Nama</th>
+    <th>Tanggal</th>
+    <th>Benar</th>
+    <th>Salah</th>
+    <th>Skor</th>
+    <th>Aksi</th>
+  </tr>
+</thead>
+
+<tbody>
+
+  {% for r in results %}
+
+  <tr>
+
+    <td>
+      {{ loop.index }}
+    </td>
+
+    <td>
+      {{ r.participant_name }}
+    </td>
+
+    <td>
+      {{ r.test_date.strftime('%d-%m-%Y %H:%M') }}
+    </td>
+
+    <td>
+      {{ r.correct_answers }}
+    </td>
+
+    <td>
+      {{ r.incorrect_answers }}
+    </td>
+
+    <td>
+      <strong>{{ r.final_score }}</strong>
+    </td>
+
+    <td>
+
+      <form
+        action="{{ url_for('delete_result', result_id=r.id) }}"
+        method="post"
+        style="display: inline;"
+        onsubmit="return confirm('Apakah Anda yakin ingin menghapus hasil peserta ini? Data yang dihapus tidak dapat dikembalikan.');"
+      >
+
+        <button
+          type="submit"
+          class="btn small danger"
+        >
+          Hapus
+        </button>
+
+      </form>
+
+    </td>
+
+  </tr>
+
+  {% else %}
+
+  <tr>
+    <td colspan="7" style="text-align: center; padding: 30px;">
+      Belum ada hasil peserta.
+    </td>
+  </tr>
+
+  {% endfor %}
+
+</tbody>
+
+  </table>
+
+</div>
+
+<script>
+function confirmDeleteAll() {
+
+  const firstConfirm = confirm(
+    "PERINGATAN!\n\n" +
+    "Semua data hasil peserta akan dihapus.\n" +
+    "Data yang sudah dihapus tidak dapat dikembalikan.\n\n" +
+    "Apakah Anda yakin ingin melanjutkan?"
+  );
+
+  if (!firstConfirm) {
+    return false;
+  }
+
+  const secondConfirm = confirm(
+    "KONFIRMASI TERAKHIR\n\n" +
+    "Hapus SEMUA hasil peserta sekarang?"
+  );
+
+  return secondConfirm;
+}
+</script>
+
+{% endblock %}

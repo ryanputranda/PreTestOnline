@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Tes Online - Ilmu Informatika UKDC{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="{{ url_for('home') }}" class="brand">
+      <span class="brand-mark">IF</span>
+      <span>PRODI ILMU INFORMATIKA<br><small>UKDC SURABAYA</small></span>
+    </a>
+    {% if session.get('admin_logged_in') %}
+    <nav>
+      <a href="{{ url_for('admin_questions') }}">Soal</a>
+      <a href="{{ url_for('admin_results') }}">Hasil</a>
+      <form action="{{ url_for('admin_logout') }}" method="post" class="inline">
+        <button class="link-button">Keluar</button>
+      </form>
+    </nav>
+    {% endif %}
+  </div>
+</header>
+
+<main class="container main-content">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert {{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}PreTest Online - Ilmu Informatika UKDC{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+  <div class="hero-card">
+
+    <div class="eyebrow">PRETEST ONLINE</div>
+
+    <h1>
+      Prodi Ilmu Informatika<br>
+      UKDC Surabaya
+    </h1>
+
+    <p>
+      Silakan masukkan nama lengkap Anda untuk memulai tes,
+      mohon memasukkan nama lengkap asli anda.
+    </p>
+
+    <form action="{{ url_for('start') }}" method="post" class="start-form">
+
+      <label for="name">Nama Lengkap</label>
+
+      <input
+        id="name"
+        name="name"
+        type="text"
+        required
+        maxlength="150"
+        autocomplete="name"
+        placeholder="Masukkan nama lengkap"
+      >
+
+      <button class="btn primary full" type="submit">
+        Mulai Tes
+      </button>
+
+    </form>
+
+  </div>
+</section>
+
+<footer class="site-footer">
+  Copyright RPK | 2026
+</footer>
+
+{% endblock %}

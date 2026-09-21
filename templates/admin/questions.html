@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Manajemen Soal{% endblock %}
+{% block content %}
+<div class="admin-head">
+  <div>
+    <div class="eyebrow">ADMIN</div>
+    <h1>Manajemen Soal</h1>
+    <p>{{ questions|length }} soal tersedia.</p>
+  </div>
+  <a class="btn primary" href="{{ url_for('admin_new_question') }}">+ Tambah Soal</a>
+</div>
+
+<div class="table-card">
+<table>
+<thead><tr><th>No</th><th>Soal</th><th>Jawaban</th><th>Aksi</th></tr></thead>
+<tbody>
+{% for q in questions %}
+<tr>
+  <td>{{ loop.index }}</td>
+  <td>{{ q.question_text }}</td>
+  <td><strong>{{ q.correct_answer }}</strong></td>
+  <td class="actions">
+    <a class="btn small secondary" href="{{ url_for('admin_edit_question', qid=q.id) }}">Edit</a>
+    <form method="post" action="{{ url_for('admin_delete_question', qid=q.id) }}" onsubmit="return confirm('Hapus soal ini?')">
+      <button class="btn small danger" type="submit">Hapus</button>
+    </form>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+{% endblock %}

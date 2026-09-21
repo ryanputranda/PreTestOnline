@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% set editing = question is not none %}
+{% block title %}{{ "Edit" if editing else "Tambah" }} Soal{% endblock %}
+{% block content %}
+<div class="form-card">
+  <div class="eyebrow">ADMIN</div>
+  <h1>{{ "Edit Soal" if editing else "Tambah Soal" }}</h1>
+  <form method="post">
+    <label>Teks Soal</label>
+    <textarea name="question_text" rows="4" required>{{ question.question_text if editing else "" }}</textarea>
+
+    {% for key, label in [('option_a','A'),('option_b','B'),('option_c','C'),('option_d','D')] %}
+    <label>Opsi {{ label }}</label>
+    <input name="{{ key }}" required value="{{ question[key] if editing else '' }}">
+    {% endfor %}
+
+    <label>Jawaban Benar</label>
+    <select name="correct_answer" required>
+      {% for x in ['A','B','C','D'] %}
+      <option value="{{ x }}" {% if editing and question.correct_answer == x %}selected{% endif %}>{{ x }}</option>
+      {% endfor %}
+    </select>
+
+    <label>Urutan Soal</label>
+    <input name="question_order" type="number" min="0" value="{{ question.question_order if editing else 0 }}">
+
+    <div class="form-actions">
+      <a class="btn secondary" href="{{ url_for('admin_questions') }}">Batal</a>
+      <button class="btn primary" type="submit">Simpan</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

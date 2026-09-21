@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Tes Selesai - UKDC{% endblock %}
+{% block content %}
+<section class="result-page">
+  <div class="result-header">
+    <div class="eyebrow">SELESAI</div>
+    <h1>Tes Selesai</h1>
+    <p>Terima kasih, <strong>{{ result.name }}</strong>.</p>
+  </div>
+
+  <div class="stats">
+    <div><span>Nama peserta</span><strong>{{ result.name }}</strong></div>
+    <div><span>Jumlah soal</span><strong>{{ result.total }}</strong></div>
+    <div><span>Jawaban benar</span><strong class="good">{{ result.correct }}</strong></div>
+    <div><span>Jawaban salah</span><strong class="bad">{{ result.wrong }}</strong></div>
+    <div class="score"><span>Nilai akhir</span><strong>{{ result.score }}</strong></div>
+  </div>
+
+  <h2>Jawaban Anda</h2>
+  <div class="review-list">
+    {% for item in result.review %}
+    <article class="review {{ 'correct' if item.status else 'wrong' }}">
+      <h3>{{ loop.index }}. {{ item.question }}</h3>
+      <p>Jawaban Anda: <strong>{{ item.given }}</strong></p>
+      <p>Jawaban benar: <strong>{{ item.correct }}</strong></p>
+      <span class="status">{{ "Benar" if item.status else "Salah" }}</span>
+    </article>
+    {% endfor %}
+  </div>
+
+  <a class="btn primary" href="{{ url_for('home') }}">Kembali ke Halaman Utama</a>
+</section>
+{% endblock %}

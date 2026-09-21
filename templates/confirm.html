@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Konfirmasi - Tes Online{% endblock %}
+{% block content %}
+<div class="center-card">
+  <h1>Selesaikan Tes?</h1>
+  <p>Apakah Anda yakin ingin menyelesaikan tes?</p>
+  <div class="actions-center">
+    <a class="btn secondary" href="javascript:history.back()">Kembali</a>
+    <form method="post" action="{{ url_for('confirm_finish') }}">
+      <button class="btn primary" type="submit">Ya, Selesaikan</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

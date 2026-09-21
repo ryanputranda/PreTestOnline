@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Soal {{ number }} - Tes Online{% endblock %}
+{% block content %}
+<section class="exam-wrap">
+  <div class="exam-top">
+    <div><strong>Soal {{ number }} dari {{ total }}</strong></div>
+    <div class="progress"><span style="width: {{ (number / total * 100)|round(0) }}%"></span></div>
+  </div>
+
+  <form method="post" action="{{ url_for('exam', number=number) }}" id="examForm">
+    <article class="question-card">
+      <div class="question-number">SOAL {{ number }}</div>
+      <h1>{{ question.question_text }}</h1>
+
+      {% for letter, text in [('A', question.option_a), ('B', question.option_b), ('C', question.option_c), ('D', question.option_d)] %}
+      <label class="option">
+        <input type="radio" name="answer" value="{{ letter }}" {% if selected == letter %}checked{% endif %}>
+        <span class="letter">{{ letter }}</span>
+        <span>{{ text }}</span>
+      </label>
+      {% endfor %}
+    </article>
+
+    <div class="exam-actions">
+      {% if number > 1 %}
+      <button class="btn secondary" type="submit" formaction="{{ url_for('exam_back', number=number) }}" formmethod="post">Sebelumnya</button>
+      {% else %}
+      <span></span>
+      {% endif %}
+      <button class="btn primary" type="submit">{{ "Selesai" if is_last else "Berikutnya" }}</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
